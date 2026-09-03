@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>しめきりボード PoC ピッチ</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6575;
+      --line: #d9e0ea;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --blue: #2563eb;
+      --teal: #0f766e;
+      --red: #be123c;
+      --amber: #b45309;
+      --green: #047857;
+    }
+
+    * {
+      box-sizing: border-box;
+      letter-spacing: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #dfe5ee;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .slide {
+      display: none;
+      width: min(1280px, 100%);
+      aspect-ratio: 16 / 9;
+      max-height: calc(100vh - 36px);
+      background: var(--bg);
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide.active {
+      display: grid;
+      grid-template-rows: 52px 1fr 34px;
+    }
+
+    .top,
+    .foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 54px;
+      color: #758195;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: var(--blue);
+    }
+
+    .body {
+      min-height: 0;
+      padding: 16px 54px 22px;
+      display: grid;
+      align-items: center;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 410px;
+      gap: 54px;
+      align-items: center;
+    }
+
+    .split.flip {
+      grid-template-columns: 430px 1fr;
+    }
+
+    .tag {
+      color: var(--blue);
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 60px;
+      line-height: 1.11;
+      font-weight: 950;
+    }
+
+    h2 {
+      font-size: 52px;
+    }
+
+    .lead {
+      margin: 24px 0 0;
+      color: #475467;
+      font-size: 25px;
+      line-height: 1.46;
+      font-weight: 650;
+      max-width: 760px;
+    }
+
+    .note {
+      margin-top: 24px;
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+      padding: 10px 12px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .quote {
+      margin-top: 24px;
+      background: #ffffff;
+      border-left: 8px solid var(--blue);
+      border-radius: 8px;
+      padding: 22px 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      color: #111827;
+      font-size: 25px;
+      line-height: 1.42;
+      font-weight: 850;
+    }
+
+    .quote span {
+      display: block;
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .proof {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .proof span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #a5f3fc;
+      padding: 0 14px;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .phone {
+      width: 355px;
+      margin: 0 auto;
+      background: #111827;
+      border-radius: 34px;
+      padding: 14px;
+      box-shadow: 0 28px 58px rgba(15, 23, 42, 0.28);
+    }
+
+    .screen {
+      min-height: 462px;
+      border-radius: 24px;
+      background: #fff;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .appbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+    }
+
+    .appbar b {
+      color: #111827;
+      font-size: 22px;
+    }
+
+    .appbar span {
+      color: var(--teal);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 13px;
+    }
+
+    .mini {
+      border-radius: 8px;
+      background: #eff6ff;
+      padding: 10px;
+    }
+
+    .mini b {
+      display: block;
+      color: var(--blue);
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .mini span {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .task {
+      border-radius: 9px;
+      border: 1px solid #e5e7eb;
+      padding: 13px;
+      margin-top: 10px;
+      background: #fff;
+    }
+
+    .task.red {
+      background: #fff1f2;
+      border-color: #fecdd3;
+    }
+
+    .task.yellow {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .task.green {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+    }
+
+    .task strong {
+      display: block;
+      color: #111827;
+      font-size: 17px;
+      line-height: 1.28;
+    }
+
+    .task span {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .receipt {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 17px 0;
+      border-bottom: 1px dashed #cbd5e1;
+      color: #344054;
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .receipt-row.total {
+      border-bottom: 0;
+      color: var(--red);
+      font-size: 34px;
+      font-weight: 950;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 225px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+    }
+
+    .card .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 24px;
+      font-weight: 950;
+      margin-bottom: 18px;
+    }
+
+    .card b {
+      display: block;
+      color: #111827;
+      font-size: 25px;
+      line-height: 1.2;
+    }
+
+    .card span {
+      display: block;
+      margin-top: 12px;
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .compare-card {
+      min-height: 385px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 30px;
+    }
+
+    .compare-card.blue {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .compare-card b {
+      display: block;
+      color: #111827;
+      font-size: 34px;
+      line-height: 1.18;
+    }
+
+    ul {
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 15px;
+    }
+
+    li {
+      color: #475467;
+      font-size: 22px;
+      line-height: 1.38;
+      font-weight: 700;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 8px solid var(--blue);
+      border-radius: 8px;
+      padding: 23px;
+      min-height: 135px;
+    }
+
+    .metric.red {
+      border-left-color: var(--red);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 27px;
+      line-height: 1.2;
+    }
+
+    .metric span {
+      display: block;
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1.38;
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    .weeks {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .week {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      min-height: 330px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 14px;
+    }
+
+    .week .no {
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .week b {
+      font-size: 28px;
+      line-height: 1.16;
+    }
+
+    .week span {
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .ask {
+      min-height: 440px;
+      border-radius: 8px;
+      background: #0f172a;
+      color: #fff;
+      padding: 50px;
+      display: grid;
+      align-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ask::after {
+      content: "PoC";
+      position: absolute;
+      right: 44px;
+      bottom: 22px;
+      color: rgba(147, 197, 253, 0.18);
+      font-size: 150px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .ask b {
+      color: #93c5fd;
+      font-size: 19px;
+      text-transform: uppercase;
+    }
+
+    .ask strong {
+      display: block;
+      max-width: 850px;
+      color: #fff;
+      font-size: 61px;
+      line-height: 1.1;
+      margin-top: 18px;
+    }
+
+    .ask span {
+      display: block;
+      color: #cbd5e1;
+      font-size: 24px;
+      line-height: 1.42;
+      max-width: 760px;
+      margin-top: 24px;
+      font-weight: 650;
+    }
+
+    .controls {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.82);
+      color: #fff;
+      padding: 8px;
+      border-radius: 12px;
+      z-index: 20;
+      opacity: 0.15;
+      transition: opacity 140ms ease;
+    }
+
+    .controls:hover,
+    .controls:focus-within {
+      opacity: 1;
+    }
+
+    .controls button {
+      width: 36px;
+      height: 32px;
+      border: 0;
+      border-radius: 8px;
+      background: #334155;
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .controls span {
+      min-width: 58px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .speaker {
+      display: none;
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      width: min(420px, calc(100vw - 36px));
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(17, 24, 39, 0.16);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
+      padding: 18px;
+      z-index: 30;
+      color: #1f2937;
+      font-size: 15px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .speaker.show {
+      display: block;
+    }
+
+    @media (max-width: 800px) {
+      .deck {
+        padding: 0;
+      }
+
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        aspect-ratio: auto;
+      }
+
+      .slide.active {
+        grid-template-rows: 44px 1fr 30px;
+      }
+
+      .top,
+      .foot {
+        padding: 0 22px;
+        font-size: 12px;
+      }
+
+      .body {
+        padding: 12px 22px 18px;
+      }
+
+      .split,
+      .split.flip,
+      .cards,
+      .compare,
+      .matrix,
+      .weeks {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      h1,
+      h2 {
+        font-size: 34px;
+      }
+
+      .lead,
+      li {
+        font-size: 17px;
+      }
+
+      .phone {
+        width: 230px;
+      }
+
+      .screen {
+        min-height: 290px;
+      }
+
+      .card,
+      .week,
+      .compare-card {
+        min-height: auto;
+        padding: 16px;
+      }
+
+      .ask strong {
+        font-size: 34px;
+      }
+
+      .ask {
+        min-height: 0;
+        padding: 28px;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        overflow: visible;
+        background: #fff;
+      }
+
+      .deck {
+        display: block;
+        padding: 0;
+      }
+
+      .slide,
+      .slide.active {
+        display: grid;
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        aspect-ratio: 16 / 9;
+        box-shadow: none;
+        border: 0;
+        page-break-after: always;
+      }
+
+      .controls,
+      .speaker {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-live="polite">
+    <section class="slide active" data-note="最初に、これは予定管理アプリではなく、期限忘れによる損失を止めるPoCだと伝えます。便利そうではなく、登録行動が起きるかで評価します。">
+      <div class="top"><span class="brand">しめきりボード</span><span>PoC Pitch</span></div>
+      <div class="body">
+        <div class="split">
+          <div>
+            <div class="tag">PoC Proposal</div>
+            <h1>期限忘れの損失は、見える化すれば防げるのか。</h1>
+            <p class="lead">解約・更新・予約の期限を、残り日数と損失額で並べるWebアプリ「しめきりボード」です。</p>
+            <div class="proof"><span>対象: 損失経験者10〜15人</span><span>期間: 4週間</span><span>実期限登録で判定</span></div>
+          </div>
+          <div class="phone" aria-label="しめきりボードの画面イメージ">
+            <div class="screen">
+              <div class="appbar"><b>期限リスク</b><span>12,800円</span></div>
+              <div class="mini-grid">
+                <div class="mini"><b>3</b><span>期限</span></div>
+                <div class="mini"><b>今日</b><span>最優先</span></div>
+                <div class="mini"><b>500</b><span>円/月</span></div>
+              </div>
+              <div class="task red"><strong>動画サブスク無料体験</strong><span><b>今日まで</b><b>1,980円</b></span></div>
+              <div class="task yellow"><strong>Adobe 学割更新</strong><span><b>あと3日</b><b>12,000円</b></span></div>
+              <div class="task green"><strong>病院の再診</strong><span><b>あと7日</b><b>予約取り直し</b></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Student deadline risk board</span><span>01 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="ここでは実感のある課題に見せます。P1では、通知は欲しいが見ない、家族に言われてショック、という発言が出ています。単なる管理不足ではなく、損失と後悔の課題です。">
+      <div class="top"><span class="brand">Problem</span><span>損した瞬間</span></div>
+      <div class="body">
+        <div class="split flip">
+          <div class="receipt">
+            <div class="receipt-row"><span>動画サブスク</span><span>1,980円</span></div>
+            <div class="receipt-row"><span>Adobe 学割</span><span>12,000円</span></div>
+            <div class="receipt-row"><span>家具レンタル</span><span>2,500円</span></div>
+            <div class="receipt-row total"><span>忘れて失った金額</span><span>16,480円</span></div>
+          </div>
+          <div>
+            <div class="tag">Pain</div>
+            <h2>問題は「通知がない」ことではなく、重要度が伝わらないこと。</h2>
+            <p class="lead">通知やメールは来ていても、授業・バイト・日常連絡に埋もれ、請求後に初めて損失として認識されます。</p>
+            <div class="quote">「サービス側から通知は来てほしい。でも見ない」<span>P1 インタビューより</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Loss is visible after it happens</span><span>02 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="ターゲットを広げすぎると評価が下がります。ここでは、解約忘れや予約忘れで5,000円以上、または2週間以上の損失を経験した大学生に絞っていることを強調します。">
+      <div class="top"><span class="brand">Initial Customer</span><span>最初の顧客</span></div>
+      <div class="body">
+        <div>
+          <div class="tag">Target</div>
+          <h2>最初の検証相手を、痛みが強い学生に絞る。</h2>
+          <p class="lead">解約忘れ・予約忘れで、5,000円以上または2週間以上の損失を経験した大学生10〜15人に検証します。</p>
+          <div class="cards" style="margin-top:34px;">
+            <div class="card"><div class="icon">1</div><b>損失経験あり</b><span>無料体験、学割更新、予約忘れで具体的な後悔がある。</span></div>
+            <div class="card"><div class="icon">2</div><b>期限が分散</b><span>メール、LINE、カレンダー、スクショ、頭の中に散っている。</span></div>
+            <div class="card"><div class="icon">3</div><b>対策が続かない</b><span>通知を見ない、メモを見返さない、登録自体が面倒。</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Focus before scale</span><span>03 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="解決策は機能を多く見せるより、登録、危険度表示、完了という流れを見せます。価値の核心は、期限を金額に変換して行動を促すことです。">
+      <div class="top"><span class="brand">Solution</span><span>何が変わるか</span></div>
+      <div class="body">
+        <div class="split">
+          <div>
+            <div class="tag">Solution</div>
+            <h2>期限を「日付」ではなく「放置コスト」で見せる。</h2>
+            <p class="lead">同じ期限でも、損失額が見えると優先度が変わります。今日やるべきことを、金額と残り日数で判断します。</p>
+            <div class="proof"><span>1. 登録</span><span>2. 危険度表示</span><span>3. 完了で回避額を記録</span></div>
+          </div>
+          <div class="phone">
+            <div class="screen">
+              <div class="appbar"><b>今日の優先</b><span>危険 2件</span></div>
+              <div class="task red"><strong>今すぐ解約チェック</strong><span><b>残り 6時間</b><b>1,980円</b></span></div>
+              <div class="task yellow"><strong>更新前にプラン確認</strong><span><b>あと3日</b><b>12,000円</b></span></div>
+              <div class="task"><strong>完了したら回避額に加算</strong><span><b>今月</b><b>1,980円回避</b></span></div>
+              <div class="mini-grid" style="margin-top:16px;">
+                <div class="mini"><b>2分</b><span>登録中央値</span></div>
+                <div class="mini"><b>色</b><span>危険度</span></div>
+                <div class="mini"><b>額</b><span>回避実感</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Make risk visible before loss</span><span>04 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="差別化は、カレンダーより多機能という話ではありません。既存ツールが日付を管理するのに対し、しめきりボードは損失額で優先順位を作る点が違います。">
+      <div class="top"><span class="brand">Differentiation</span><span>既存との違い</span></div>
+      <div class="body">
+        <div class="compare">
+          <div class="compare-card">
+            <b>既存カレンダー</b>
+            <ul>
+              <li>予定、授業、バイトと期限が同じ場所に並ぶ</li>
+              <li>通知されても、損失額までは分からない</li>
+              <li>見返す理由が弱く、課金後に気づきやすい</li>
+            </ul>
+          </div>
+          <div class="compare-card blue">
+            <b>しめきりボード</b>
+            <ul>
+              <li>損する期限だけを別枠で管理する</li>
+              <li>金額と残り日数で危険度を表示する</li>
+              <li>完了後に損失回避額が残り、使う理由になる</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Not a calendar replacement</span><span>05 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="収益仮説は盛らずに言います。月500円の有料化は要検証なので、今回のPoCでは支払意思を断定せず、まず価値の前提となる登録行動を確認します。">
+      <div class="top"><span class="brand">Business Hypothesis</span><span>収益仮説</span></div>
+      <div class="body">
+        <div class="split">
+          <div>
+            <div class="tag">Business</div>
+            <h2>お金の前に、行動で痛みの強さを確かめる。</h2>
+            <p class="lead">「欲しいです」という感想では弱いです。自分の実期限を登録するかどうかで、課題の強さを判断します。</p>
+            <div class="note">価格・継続率は ⚠ 要検証</div>
+          </div>
+          <div class="receipt">
+            <div class="receipt-row"><span>発言</span><span>欲しい</span></div>
+            <div class="receipt-row"><span>弱い根拠</span><span>感想だけ</span></div>
+            <div class="receipt-row"><span>強い根拠</span><span>実期限登録</span></div>
+            <div class="receipt-row total"><span>今回測るもの</span><span>行動</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Pricing remains unvalidated</span><span>06 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="ここでは、テスト参加者に何をしてもらうのかを具体的に話します。画面を見てもらい、説明してもらい、自分の期限を1件登録してもらう。この3つで、伝わるか、使えるか、面倒ではないかを確認します。">
+      <div class="top"><span class="brand">User Test</span><span>実際にやってもらうこと</span></div>
+      <div class="body">
+        <div>
+          <div class="tag">Test Flow</div>
+          <h2>10〜15人に、3つの行動をしてもらいます。</h2>
+          <div class="matrix" style="margin-top:28px;">
+            <div class="metric"><b>1. 画面を見る</b><span>30秒以内に「何のアプリか」を自分の言葉で説明してもらう。</span></div>
+            <div class="metric"><b>2. 期限を探す</b><span>自分が忘れると困る解約・更新・予約を1件思い出してもらう。</span></div>
+            <div class="metric"><b>3. 登録する</b><span>期限名、日付、損失額を入力し、かかった時間を測る。</span></div>
+            <div class="metric red"><b>4. 理由を聞く</b><span>登録した理由、または登録しなかった理由を記録する。</span></div>
+          </div>
+          <div class="note">見る数字: 理解できた人数、登録した人数、入力時間、離脱理由。</div>
+        </div>
+      </div>
+      <div class="foot"><span>Measure behavior, not compliments</span><span>07 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="スケジュールは、作業予定ではなく週次ゲートとして話します。各週で分かったことを確認しながら進めるため、次フェーズに進むべきかを判断しやすい計画です。">
+      <div class="top"><span class="brand">Execution Plan</span><span>4週間の進め方</span></div>
+      <div class="body">
+        <div class="weeks">
+          <div class="week"><div class="no">Week 1</div><b>課題照合</b><span>P1発言と同じ痛みが他の学生にもあるか確認。</span></div>
+          <div class="week"><div class="no">Week 2</div><b>最小実装</b><span>登録、一覧、危険度、完了、保存だけを作る。</span></div>
+          <div class="week"><div class="no">Week 3</div><b>実期限テスト</b><span>10〜15人の登録率、入力時間、離脱理由を記録。</span></div>
+          <div class="week"><div class="no">Week 4</div><b>判定</b><span>条件に照らして、継続・修正・撤退を判断。</span></div>
+        </div>
+      </div>
+      <div class="foot"><span>Weekly gates limit waste</span><span>08 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="ここでは、1ヶ月後に何が分かるのかを具体的に話します。続ける場合も止める場合も、理由が数字と発言で残ることを伝えます。">
+      <div class="top"><span class="brand">Result Image</span><span>1ヶ月後に分かること</span></div>
+      <div class="body">
+        <div>
+          <div class="tag">After 4 weeks</div>
+          <h2>「続けるか、止めるか」を数字と発言で判断します。</h2>
+          <div class="cards" style="margin-top:34px;">
+            <div class="card"><div class="icon">A</div><b>伝わったか</b><span>何のアプリか説明できた人数と、分からなかった理由。</span></div>
+            <div class="card"><div class="icon">B</div><b>使われたか</b><span>実期限を登録した人数、登録にかかった時間、登録カテゴリ。</span></div>
+            <div class="card"><div class="icon">C</div><b>次に進むか</b><span>続けるなら改善点、止めるなら刺さらなかった理由。</span></div>
+          </div>
+          <p class="lead">つまり、完成品ではなく「次に作る価値があるか」の判断材料を返します。</p>
+        </div>
+      </div>
+      <div class="foot"><span>Evidence for the next decision</span><span>09 / 10</span></div>
+    </section>
+
+    <section class="slide" data-note="最後は、審査会で見てほしいポイントを明確にします。課題が具体的で、作る範囲が小さく、成功と撤退の条件を先に決めている。この3点が、PoCとして評価できる理由です。">
+      <div class="top"><span class="brand">Review Point</span><span>審査で見てほしい点</span></div>
+      <div class="body">
+        <div>
+          <div class="tag">Why this PoC</div>
+          <h2>この企画は、失敗しても学びが残るように設計しました。</h2>
+          <div class="cards" style="margin-top:34px;">
+            <div class="card"><div class="icon">1</div><b>根拠がある</b><span>P1発言と5件比較から、通知ではなく重要度の見えなさに絞った。</span></div>
+            <div class="card"><div class="icon">2</div><b>測れる</b><span>「欲しいか」ではなく、その場で実期限を登録するかを見る。</span></div>
+            <div class="card"><div class="icon">3</div><b>止められる</b><span>登録されなければ撤退。続ける場合も次の改善点が分かる。</span></div>
+          </div>
+          <p class="lead">このPoCで、学生が本当に「損する期限」を自分で止めにいくかを確かめます。</p>
+        </div>
+      </div>
+      <div class="foot"><span>しめきりボード</span><span>10 / 10</span></div>
+    </section>
+  </main>
+
+  <div class="controls" aria-label="スライド操作">
+    <button type="button" id="prev" aria-label="前のスライド">‹</button>
+    <span id="counter">1 / 10</span>
+    <button type="button" id="next" aria-label="次のスライド">›</button>
+    <button type="button" id="notes" aria-label="発表メモ">N</button>
+  </div>
+  <aside class="speaker" id="speaker" aria-label="発表メモ"></aside>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const counter = document.getElementById("counter");
+    const speaker = document.getElementById("speaker");
+    let index = 0;
+
+    function showSlide(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      speaker.textContent = slides[index].dataset.note || "";
+      location.hash = String(index + 1).padStart(2, "0");
+    }
+
+    document.getElementById("prev").addEventListener("click", () => showSlide(index - 1));
+    document.getElementById("next").addEventListener("click", () => showSlide(index + 1));
+    document.getElementById("notes").addEventListener("click", () => {
+      speaker.classList.toggle("show");
+      speaker.textContent = slides[index].dataset.note || "";
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
+        event.preventDefault();
+        showSlide(index + 1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        showSlide(index - 1);
+      }
+      if (event.key.toLowerCase() === "n") {
+        speaker.classList.toggle("show");
+        speaker.textContent = slides[index].dataset.note || "";
+      }
+      if (event.key.toLowerCase() === "f") {
+        document.documentElement.requestFullscreen?.();
+      }
+    });
+
+    const hashIndex = Number(location.hash.replace("#", "")) - 1;
+    if (Number.isInteger(hashIndex) && hashIndex >= 0) {
+      showSlide(hashIndex);
+    } else {
+      showSlide(0);
+    }
+  </script>
+</body>
+</html>

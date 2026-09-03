@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>しめきりボード keyvisual</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --bg: #eef2f6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #f8fafc, var(--bg));
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100vw - 48px));
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .copy {
+      display: grid;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 58px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: #344054;
+      font-size: 25px;
+      line-height: 1.55;
+    }
+
+    .phone {
+      background: #111827;
+      border-radius: 34px;
+      padding: 18px;
+      box-shadow: 0 24px 52px rgba(15, 23, 42, 0.24);
+    }
+
+    .screen {
+      height: 610px;
+      overflow: hidden;
+      background: #f8fafc;
+      border-radius: 24px;
+      padding: 18px;
+      display: grid;
+      gap: 13px;
+      align-content: start;
+    }
+
+    .total {
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      border-radius: 8px;
+      padding: 13px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .total strong {
+      color: #0e7490;
+      font-size: 24px;
+    }
+
+    .total span {
+      color: #155e75;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .screen-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .screen-title strong { font-size: 22px; }
+    .screen-title span { color: var(--muted); font-size: 13px; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .card.red {
+      background: #ffe8e8;
+      border-color: #fecaca;
+    }
+
+    .card.amber {
+      background: #fff4df;
+      border-color: #fed7aa;
+    }
+
+    .card.green {
+      background: #e9f8ef;
+      border-color: #bbf7d0;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      color: #475467;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="copy">
+      <div class="eyebrow">しめきりボード</div>
+      <h1>期限忘れの損失を、発生前に止める。</h1>
+      <p>サブスク解約、教習所予約、病院の再診。忘れると損する期限だけを、残り日数と損失額で優先順位化します。</p>
+    </section>
+    <section class="phone" aria-label="期限ボードの画面例">
+      <div class="screen">
+        <div class="total">
+          <span>避けられる損失</span>
+          <strong>12,800円</strong>
+        </div>
+        <div class="screen-title">
+          <strong>期限リスク</strong>
+          <span>残り日数順</span>
+        </div>
+        <article class="card red">
+          <h2>動画サブスク無料体験</h2>
+          <div class="meta"><span>今日まで</span><span>1,980円</span></div>
+        </article>
+        <article class="card amber">
+          <h2>教習所の次回予約</h2>
+          <div class="meta"><span>あと3日</span><span>2週間遅れ</span></div>
+        </article>
+        <article class="card green">
+          <h2>皮膚科の再診</h2>
+          <div class="meta"><span>あと7日</span><span>予約取り直し</span></div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

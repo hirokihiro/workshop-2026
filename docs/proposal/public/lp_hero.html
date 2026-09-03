@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>しめきりボード LP hero</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --blue: #2563eb;
+      --bg: #eef2f6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f8fafc;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+    }
+
+    .hero {
+      min-height: 720px;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 42px;
+      align-items: center;
+      padding: 56px 72px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 242, 246, 0.96)),
+        var(--bg);
+    }
+
+    .copy {
+      display: grid;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 62px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: #344054;
+      font-size: 24px;
+      line-height: 1.55;
+    }
+
+    .button {
+      width: fit-content;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 14px 22px;
+    }
+
+    .product {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 22px;
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .phone {
+      background: #111827;
+      border-radius: 34px;
+      padding: 16px;
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.22);
+    }
+
+    .screen {
+      height: 560px;
+      background: #f8fafc;
+      border-radius: 24px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      overflow: hidden;
+    }
+
+    .screen-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .screen-title strong { font-size: 21px; }
+    .screen-title span { color: var(--muted); font-size: 13px; }
+
+    .deadline {
+      border-radius: 8px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .deadline.red {
+      background: #ffe8e8;
+      border-color: #fecaca;
+    }
+
+    .deadline.amber {
+      background: #fff4df;
+      border-color: #fed7aa;
+    }
+
+    .deadline.green {
+      background: #e9f8ef;
+      border-color: #bbf7d0;
+    }
+
+    .deadline h2 {
+      margin: 0 0 7px;
+      font-size: 17px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      color: #475467;
+      font-size: 13px;
+    }
+
+    .form {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .form h2 {
+      margin: 0 0 4px;
+      font-size: 25px;
+      letter-spacing: 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .input {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f9fafb;
+      padding: 12px 14px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <main class="hero">
+    <section class="copy">
+      <div class="eyebrow">しめきりボード</div>
+      <h1>損する期限だけを、危険度順に。</h1>
+      <p>忘れると損する期限を、残り日数と損失額で管理。Google カレンダーでは埋もれがちな期限を、行動判断しやすい順番に並べます。</p>
+      <div class="button">PoCで検証する</div>
+    </section>
+    <section class="product" aria-label="しめきりボードの画面例">
+      <div class="phone">
+        <div class="screen">
+          <div class="screen-title">
+            <strong>期限ボード</strong>
+            <span>12,800円</span>
+          </div>
+          <article class="deadline red">
+            <h2>動画サブスク無料体験</h2>
+            <div class="meta"><span>今日まで</span><span>1,980円</span></div>
+          </article>
+          <article class="deadline amber">
+            <h2>教習所の次回予約</h2>
+            <div class="meta"><span>あと3日</span><span>2週間遅れ</span></div>
+          </article>
+          <article class="deadline green">
+            <h2>病院の再診</h2>
+            <div class="meta"><span>あと7日</span><span>予約取り直し</span></div>
+          </article>
+        </div>
+      </div>
+      <div class="panel form">
+        <h2>最小入力で登録</h2>
+        <div class="field">
+          <label>期限名</label>
+          <div class="input">Adobe 学割更新</div>
+        </div>
+        <div class="field">
+          <label>期限日</label>
+          <div class="input">2026-08-05</div>
+        </div>
+        <div class="field">
+          <label>失うお金・時間</label>
+          <div class="input">12,000円</div>
+        </div>
+        <div class="button">期限カードに追加</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
